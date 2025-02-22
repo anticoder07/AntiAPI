@@ -1,7 +1,7 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint
 
 from src.commons.payload.response_handler import ResponseHandler
-from src.services.messageService import MessageService
+from src.services.message_service import MessageService
 
 hello_bp = Blueprint('hello', __name__)
 message_service = MessageService()
