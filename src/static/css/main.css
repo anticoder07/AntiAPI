@@ -1,0 +1,34 @@
+@import 'themes/light.css';
+@import 'themes/dark.css';
+
+@import 'utils/scrollbar.css';
+@import 'utils/colors.css';
+@import 'utils/animations.css';
+
+@import 'components/header.css';
+@import 'components/sidebar.css';
+@import 'components/command-input.css';
+@import 'components/popup-menu.css';
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.logo-gradient {
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.avatar-gradient {
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+}
+
+.main-content {
+    background-color: var(--background-color);
+    transition: background-color 0.3s;
+}

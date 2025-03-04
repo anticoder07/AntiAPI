@@ -1,4 +1,4 @@
-from src.commons.payload.response_handler import ResponseHandler
+from src.payloads.responses.response_handler import ResponseHandler
 
 
 def handle_generic_exception(error):

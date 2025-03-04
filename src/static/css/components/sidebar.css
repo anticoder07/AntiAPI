@@ -1,0 +1,5 @@
+.app-sidebar {
+    background-color: var(--sidebar-bg);
+    border-color: var(--sidebar-border);
+    transition: background-color 0.3s, border-color 0.3s;
+}

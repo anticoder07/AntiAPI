@@ -1,0 +1,50 @@
+<div class="flex flex-col h-screen" style="background-color: var(--background-color); color: var(--text-color);">
+    <header class="app-header-container flex justify-between items-center px-4 py-3 sticky top-0 z-10 bg-transparent backdrop-blur-md">
+        <div class="flex items-center">
+            <div class="mr-4 relative">
+                <select class="font-semibold py-1 px-2 rounded-md text-base appearance-none cursor-pointer pr-9"
+                        style="background-color: var(--input-bg); border: 1px solid var(--input-border);">
+                    <option value="GET" class="api-get font-bold" selected>GET</option>
+                    <option value="POST" class="api-post font-bold">POST</option>
+                    <option value="PUT" class="api-put font-bold">PUT</option>
+                    <option value="DELETE" class="api-delete font-bold">DELETE</option>
+                    <option value="PATCH" class="api-patch font-bold">PATCH</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2"
+                     style="color: var(--text-color);">
+                    <svg class="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                    </svg>
+                </div>
+            </div>
+            <span class="editable-url text-lg font-semibold cursor-text px-2 py-1 rounded hover:bg-opacity-10 hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  ondblclick="this.contentEditable=true; this.focus();"
+                  onblur="this.contentEditable=false;">
+                project/topic/api
+            </span>
+        </div>
+        <button class="font-medium rounded-md  px-6 py-1 transition-colors duration-200 hover:opacity-90"
+                style="background-color: var(--api-get); color: white;">
+            Save
+        </button>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden">
+        <div class="w-1/2 p-5 border-r custom-scrollbar overflow-auto" style="border-color: var(--sidebar-border);">
+            <h2 class="text-xl font-medium mb-3">Input</h2>
+            <textarea
+                    class="w-full h-5/6 p-4 rounded-md resize-none shadow-inner text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    style="background-color: var(--input-bg); border: 1px solid var(--input-border); color: var(--text-color); min-height: calc(100vh - 170px);"
+                    placeholder="Enter your input here..."></textarea>
+        </div>
+        <div class="w-1/2 p-5 custom-scrollbar overflow-auto">
+            <h2 class="text-xl font-medium mb-3">Preview</h2>
+            <div class="w-full h-5/6 p-4 border rounded-md shadow-sm"
+                 style="background-color: var(--popup-bg); border: 1px solid var(--popup-border); min-height: calc(100vh - 170px);">
+                <div id="display-content" class="overflow-auto h-full">
+                    <p style="color: var(--text-color);">Your content will appear here...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

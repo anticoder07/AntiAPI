@@ -1,0 +1,19 @@
+.api-get {
+    color: var(--api-get);
+}
+
+.api-post {
+    color: var(--api-post);
+}
+
+.api-patch {
+    color: var(--api-patch);
+}
+
+.api-put {
+    color: var(--api-put);
+}
+
+.api-delete {
+    color: var(--api-delete);
+}

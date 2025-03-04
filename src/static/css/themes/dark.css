@@ -1,0 +1,29 @@
+[data-theme="dark"] {
+    --background-color: #0f172a;
+    --text-color: #e2e8f0;
+    --header-bg: #1e293b;
+    --header-border: #334155;
+    --sidebar-bg: #1e293b;
+    --sidebar-border: #334155;
+    --input-bg: #334155;
+    --input-border: #475569;
+    --hover-bg: #334155;
+    --folder-icon: #94a3b8;
+    --folder-open-icon: #60a5fa;
+    --active-bg: #1e40af;
+    --active-border: #60a5fa;
+    --active-text: #60a5fa;
+    --shadow-color: rgba(0, 0, 0, 0.2);
+    --scrollbar-thumb: rgba(148, 163, 184, 0.3);
+    --popup-bg: #1e293b;
+    --popup-border: #334155;
+    --popup-shadow: rgba(0, 0, 0, 0.3);
+    --menu-item-hover: #334155;
+    --menu-border: #334155;
+    --api-get: #22c55e;
+    --api-post: #3b82f6;
+    --api-patch: #fbbf24;
+    --api-delete: #f87171;
+    --api-put: #fb923c;
+    --default-text: #94a3b8;
+}

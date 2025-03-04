@@ -1,0 +1,29 @@
+:root {
+    --background-color: #f8fafc;
+    --text-color: #334155;
+    --header-bg: #ffffff;
+    --header-border: #f1f5f9;
+    --sidebar-bg: #ffffff;
+    --sidebar-border: #f1f5f9;
+    --input-bg: #f1f5f9;
+    --input-border: #e2e8f0;
+    --hover-bg: #f1f5f9;
+    --folder-icon: #64748b;
+    --folder-open-icon: #3b82f6;
+    --active-bg: #eff6ff;
+    --active-border: #3b82f6;
+    --active-text: #3b82f6;
+    --shadow-color: rgba(0, 0, 0, 0.05);
+    --scrollbar-thumb: rgba(148, 163, 184, 0.5);
+    --popup-bg: #ffffff;
+    --popup-border: #e2e8f0;
+    --popup-shadow: rgba(0, 0, 0, 0.1);
+    --menu-item-hover: #f1f5f9;
+    --menu-border: #e2e8f0;
+    --api-get: #10b981;
+    --api-post: #3b82f6;
+    --api-patch: #f59e0b;
+    --api-delete: #ef4444;
+    --api-put: #f97316;
+    --default-text: #64748b;
+}

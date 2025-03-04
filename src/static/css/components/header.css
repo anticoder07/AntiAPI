@@ -1,0 +1,9 @@
+.app-header {
+    background-color: var(--header-bg);
+    border-color: var(--header-border);
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.app-header-container{
+    background-color: var(--background-color);
+}
