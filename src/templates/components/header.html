@@ -4,13 +4,16 @@
     </h1>
 
     <!-- Command Input -->
+    {% if title_hide %}
     {% include 'components/command-input.html' %}
+    {% endif %}
 
     <div class="flex items-center w-32 justify-end">
-        <a href="https://chatgpt.com/" target="blank" class="w-10 h-10 rounded-full flex items-center justify-center text-white font-medium avatar-gradient shadow-md">
-<!--            <i class="fa-solid fa-brain"></i>-->AI
-
-        </a>
+        <div target="blank"
+             class="w-10 h-10 text-2xl rounded-full flex items-center justify-center text-white font-medium avatar-gradient shadow-md"
+             id="avatar">
+            <i class="fa-solid fa-brain"></i>
+        </div>
         <button id="theme-toggle" class="theme-toggle ml-2 p-2 hover:bg-opacity-20 rounded-full transition-colors">
             <i class="fa-solid fa-moon"></i>
         </button>
@@ -22,3 +25,25 @@
         {% include 'components/popup-menu.html' %}
     </div>
 </header>
+<script src="{{ url_for('static', filename='js/utils/fetch-api.js') }}"></script>
+<script>
+    const avatar = document.getElementById("avatar");
+
+    async function loadCompanyInfo() {
+        try {
+            const msg = await fetchGet('/companies', {}, true);
+            console.log(msg);
+            if (msg.status === 'SUCCESS') {
+                avatar.innerHTML = ''
+                avatar.innerHTML = msg.data.company_name[0];
+            } else {
+                Notification.show(msg.message, 'error');
+            }
+        } catch (error) {
+            console.error('Error during company info fetch:', error);
+            Notification.show('An error occurred while fetching company info', 'error');
+        }
+    }
+
+    loadCompanyInfo();
+</script>

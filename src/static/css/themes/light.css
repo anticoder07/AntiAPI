@@ -26,4 +26,15 @@
     --api-delete: #ef4444;
     --api-put: #f97316;
     --default-text: #64748b;
+    --primary-color: #7857fe;
+    --primary-gradient: linear-gradient(135deg, #7857fe 0%, #6e48e5 100%);
+    --text-secondary: #636363;
+    --text-dark: #303030;
+    --text-label: #444;
+    --form-bg: white;
+    --border-color: #e0e0e0;
+    --border-hover: #999;
+    --error-color: #f03e3e;
+    --primary-shadow: rgba(110, 72, 229, 0.3);
+    --primary-shadow-hover: rgba(110, 72, 229, 0.4);
 }

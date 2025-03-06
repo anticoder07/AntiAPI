@@ -1,8 +1,25 @@
-/**
- * Sidebar Component
- * Handles the sidebar navigation tree
- */
-import { truncateText } from '../utils/helpers.js';
+import {truncateText} from '../utils/helpers.js';
+
+async function loadProjectList() {
+    try {
+        const msg = await fetchGet('/projects', {}, true);
+        if (msg.status === 'SUCCESS') {
+            // Lưu dữ liệu vào biến
+            projectsData = msg.data;
+
+            // Hiển thị dữ liệu với sắp xếp mặc định
+            sortAndRenderProjects();
+
+            // Hiển thị loại sắp xếp hiện tại
+            updateSortIndicator();
+        } else {
+            Notification.show(msg.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error fetching project list:', error);
+        Notification.show('An error occurred while fetching project list', 'error');
+    }
+}
 
 class Sidebar {
     constructor() {
@@ -20,9 +37,9 @@ class Sidebar {
                 content: "Topic 1 name",
                 isOpen: true,
                 apis: [
-                    { type: "api", protocol: "GET", content: "API 111111111111111111" },
-                    { type: "api", protocol: "POST", content: "API 2" },
-                    { type: "api", protocol: "PATCH", content: "API 33333" },
+                    {type: "api", protocol: "GET", content: "API 111111111111111111"},
+                    {type: "api", protocol: "POST", content: "API 2"},
+                    {type: "api", protocol: "PATCH", content: "API 33333"},
                 ]
             },
             {
@@ -44,11 +61,16 @@ class Sidebar {
 
     getProtocolClass(protocol) {
         switch (protocol) {
-            case 'GET': return 'api-get';
-            case 'POST': return 'api-post';
-            case 'PATCH': return 'api-patch';
-            case 'DELETE': return 'api-delete';
-            default: return '';
+            case 'GET':
+                return 'api-get';
+            case 'POST':
+                return 'api-post';
+            case 'PATCH':
+                return 'api-patch';
+            case 'DELETE':
+                return 'api-delete';
+            default:
+                return '';
         }
     }
 

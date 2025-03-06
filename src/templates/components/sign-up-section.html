@@ -1,0 +1,77 @@
+<form action="" method="post" class="form block" id="form-1">
+    <h3 class="heading">Business Account Registration</h3>
+    <p class="desc">Create your account to access business features</p>
+    <div class="spacer"></div>
+
+    <div class="form-group">
+        <label for="company_name" class="form-label">Business Name</label>
+        <input type="text" class="form-control" id="company_name" name="company_name" placeholder="e.g., Anti-Group"
+               rule="isRequired"/>
+        <span class="form-message"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="user_name" class="form-label">Business Email</label>
+        <input type="text" class="form-control" id="user_name" name="user_name"
+               placeholder="e.g., antigroup@anti.com" rule="isRequired|isGmail"/>
+        <span class="form-message"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password"
+               rule="isRequired|min:6|max:20"/>
+        <span class="form-message"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="password_confirmation" class="form-label">Confirm Password</label>
+        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation"
+               placeholder="Re-enter your password" rule="isRequired|min:6|max:20|isConfirmed"/>
+        <span class="form-message"></span>
+    </div>
+
+    <button class="form-submit">Sign Up</button>
+    <div class="spacer-m"></div>
+    <p class="line-link"><a href="{{ redirect_login }}">Back to Login</a></p>
+</form>
+
+<script src="{{ url_for('static', filename='js/utils/form-validation.js') }}"></script>
+<script src="{{ url_for('static', filename='js/utils/fetch-api.js') }}"></script>
+<script>
+    const min = 6,
+        max = 10;
+    Validator({
+        form: "#form-1",
+        formGroupSelector: ".form-group",
+        rules: [
+            Validator.isRequired("#company_name", "Please enter your full name"),
+
+            Validator.isRequired("#user_name", "Please enter your email"),
+            Validator.isEmail("#user_name"),
+
+            Validator.isRequired("#password", "Please enter your password"),
+            Validator.rangeLength("#password", min, max),
+
+            Validator.isRequired("#password_confirmation", "Please re-enter your password"),
+
+            Validator.isConfirmed("#password_confirmation", function () {
+                return document.querySelector("#form-1 #password").value;
+            }),
+        ],
+        onSubmit: async function (data) {
+            try {
+                const msg = await fetchPost('/auth/sign-up', data, false);
+
+                if (msg.status === 'SUCCESS') {
+                    Notification.show('Sign up successfully', 'success');
+                } else {
+                    Notification.show(msg.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error during sign up:', error);
+                Notification.show('An error occurred during sign up', 'error');
+            }
+        }
+    });
+</script>

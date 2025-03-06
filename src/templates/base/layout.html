@@ -12,24 +12,29 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     {% block styles %}{% endblock %}
 </head>
-
 <body class="flex flex-col h-screen">
-    <!-- Header -->
-    {% include 'components/header.html' %}
+<!-- Header -->
+{% include 'components/header.html' %}
 
-    <!-- Main Content -->
-    <div class="flex flex-1 overflow-hidden">
-        <!-- Sidebar -->
-        {% include 'components/sidebar.html' %}
+<!-- Main Content -->
+<div class="flex flex-1 overflow-hidden">
+    <!-- Sidebar -->
+    <!-- Sidebar -->
+    {% if sidebar_template %}
+    {% include sidebar_template %}
+    {% endif %}
 
-        <!-- Content Area -->
-        <div class="main-content flex-1 overflow-auto custom-scrollbar">
-            {% include 'pages/api-input.html' %}
-        </div>
+    <!-- Content Area -->
+    <div class="main-content flex-1 overflow-auto custom-scrollbar">
+        {% if content_template %}
+        {% include content_template %}
+        {% endif %}
     </div>
+</div>
 
-    <!-- Scripts -->
-    <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
-    {% block scripts %}{% endblock %}
+<!-- Scripts -->
+<script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+{% block scripts %}{% endblock %}
 </body>
 </html>

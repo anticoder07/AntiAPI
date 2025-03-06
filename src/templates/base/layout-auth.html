@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main-auth.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+<div class="main">
+    <div class="login-container">
+        <div class="welcome-section">
+            {% include 'components/welcome-section.html' %}
+        </div>
+        <div class="form-section">
+            {% include form_template %}
+        </div>
+    </div>
+</div>
+</body>
+<script type="module" src="{{ url_for('static', filename='js/components/notification.js') }}"></script>
+</html>

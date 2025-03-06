@@ -1,0 +1,62 @@
+DROP DATABASE anti_database;
+
+CREATE DATABASE anti_database;
+USE anti_database;
+
+-- Tạo bảng Company
+CREATE TABLE Company (
+    CompanyId INT PRIMARY KEY AUTO_INCREMENT,
+    CompanyName VARCHAR(255) NOT NULL,
+    Username VARCHAR(255) NOT NULL,
+    Password VARCHAR(255) NOT NULL,
+    Status VARCHAR(255),
+    CreateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tạo bảng Project (không có FOREIGN KEY)
+CREATE TABLE Project (
+    ProjectId INT PRIMARY KEY AUTO_INCREMENT,
+    CompanyId INT NOT NULL,  -- Không ràng buộc khóa ngoại
+    ProjectName VARCHAR(255) NOT NULL,
+    Password VARCHAR(255) NOT NULL,
+    UpdateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CreateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tạo bảng Topic (không có FOREIGN KEY)
+CREATE TABLE Topic (
+    TopicId INT PRIMARY KEY AUTO_INCREMENT,
+    ProjectId INT NOT NULL,  -- Không ràng buộc khóa ngoại
+    TopicName VARCHAR(255) NOT NULL,
+    UpdateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CreateAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tạo bảng Api (không có FOREIGN KEY)
+CREATE TABLE Api (
+    ApiId INT PRIMARY KEY AUTO_INCREMENT,
+    TopicId INT NOT NULL,  -- Không ràng buộc khóa ngoại
+    ApiName VARCHAR(255) NOT NULL,
+    ApiType VARCHAR(100),
+    FormatApi VARCHAR(100),
+    Endpoint VARCHAR(255)
+);
+
+-- Tạo bảng Vul (không có FOREIGN KEY)
+CREATE TABLE Vul (
+    VulId INT PRIMARY KEY AUTO_INCREMENT,
+    ApiId INT NOT NULL,  -- Không ràng buộc khóa ngoại
+    Payload TEXT NOT NULL,
+    VulType VARCHAR(100),
+    VulStatus VARCHAR(100),
+    RegexFix TEXT
+);
+
+-- Tạo bảng Token
+CREATE TABLE Token (
+    TokenId INT PRIMARY KEY AUTO_INCREMENT,
+    CustomerId VARCHAR(255) NOT NULL,
+    CustomerType VARCHAR(50) NOT NULL,
+    Token VARCHAR(1000) NOT NULL,
+    ExpiresAt TIMESTAMP NOT NULL
+);

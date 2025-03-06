@@ -1,0 +1,365 @@
+<div class="relative overflow-x-auto shadow-md sm:rounded-none">
+    <div class="pb-1 dark:bg-gray-900 p-2 flex flex-wrap items-center gap-2 pb-2" style="background-color: #3d4c6f">
+        <!-- Improved search bar with better spacing -->
+        <div class="relative">
+            <div class="flex">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"></path>
+                    </svg>
+                </div>
+                <input type="text" id="table-search"
+                       class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-64 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                       placeholder="Search for items">
+            </div>
+        </div>
+
+        <!-- Sort options dropdown -->
+        <div class="relative">
+            <button id="sort-dropdown-button"
+                    class="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-4 py-2 text-center inline-flex items-center"
+                    type="button">
+                Sort by
+                <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 10 6">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="m1 1 4 4 4-4"/>
+                </svg>
+            </button>
+            <div id="sort-dropdown"
+                 class="z-10 hidden absolute bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="sort-dropdown-button">
+                    <li>
+                        <button type="button"
+                                class="sort-option w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-left"
+                                data-sort="name-asc">
+                            Name (A-Z)
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button"
+                                class="sort-option w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-left"
+                                data-sort="name-desc">
+                            Name (Z-A)
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button"
+                                class="sort-option w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-left"
+                                data-sort="updated-newest">
+                            Updated (Newest)
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button"
+                                class="sort-option w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-left"
+                                data-sort="updated-oldest">
+                            Updated (Oldest)
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button"
+                                class="sort-option w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-left"
+                                data-sort="created-newest">
+                            Created (Newest)
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button"
+                                class="sort-option w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-left"
+                                data-sort="created-oldest">
+                            Created (Oldest)
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <button type="button"
+                class="text-white bg-blue-400 dark:bg-blue-500 font-medium rounded-lg text-sm px-4 py-2 text-center"
+                onclick="popupController.open()"
+        >New Project
+
+        </button>
+
+        <!-- Current sort indicator -->
+        <span id="current-sort" class="text-white text-xs ml-2"></span>
+    </div>
+
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+            <th scope="col" class="p-4">
+                <div class="flex items-center">
+                    <input id="checkbox-all-search" type="checkbox"
+                           class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                    <label for="checkbox-all-search" class="sr-only">checkbox</label>
+                </div>
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Product name
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Update At
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Create At
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Status
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Action
+            </th>
+        </tr>
+        </thead>
+        <tbody id="project-list">
+        <!-- Dữ liệu sẽ được cập nhật động bằng JavaScript -->
+        </tbody>
+    </table>
+</div>
+
+<script src="{{ url_for('static', filename='js/utils/fetch-api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/components/popup-input.js') }}"></script>
+<script src="{{ url_for('static', filename='js/components/notification.js') }}"></script>
+<script>
+    let fields = [
+        {label: "Project Name", key: "projectName", placeholder: "Project name input"},
+        {label: "Password", key: "password", placeholder: "Password input"},
+    ];
+
+    const handleSubmit = (data) => {
+        async function loadCompanyInfo() {
+            try {
+                const msg = await fetchPost('/projects', {
+                    "project_name": data.projectName,
+                    "password": data.password
+                }, true);
+                if (msg.status === 'SUCCESS') {
+                    projectsData.push(msg.data);
+
+                    sortAndRenderProjects();
+
+                    Notification.show(msg.message, 'success');
+                } else {
+                    Notification.show(msg.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error during company info fetch:', error);
+                Notification.show('An error occurred while fetching company info', 'error');
+            }
+        }
+
+        loadCompanyInfo();
+    };
+
+    const popupController = createPopup(handleSubmit, fields, 'Project Input');
+</script>
+<script>
+    // Biến lưu trữ danh sách dự án đã tải về
+    let projectsData = [];
+    let currentSearchKeyword = '';
+    let currentSortOption = 'name-asc'; // Mặc định sắp xếp theo tên A-Z
+
+    // Hàm tải danh sách dự án từ API
+    async function loadProjectList() {
+        try {
+            const msg = await fetchGet('/projects', {}, true);
+            if (msg.status === 'SUCCESS') {
+                // Lưu dữ liệu vào biến
+                projectsData = msg.data;
+
+                // Hiển thị dữ liệu với sắp xếp mặc định
+                sortAndRenderProjects();
+
+                // Hiển thị loại sắp xếp hiện tại
+                updateSortIndicator();
+            } else {
+                Notification.show(msg.message, 'error');
+            }
+        } catch (error) {
+            console.error('Error fetching project list:', error);
+            Notification.show('An error occurred while fetching project list', 'error');
+        }
+    }
+
+    // Hàm hiển thị danh sách dự án với khả năng tô màu từ khóa tìm kiếm
+    function renderProjects(projects, searchKeyword = '') {
+        const tableBody = document.getElementById('project-list');
+        tableBody.innerHTML = ''; // Xóa nội dung cũ
+
+        if (projects.length === 0) {
+            tableBody.innerHTML = `
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <td colspan="6" class="px-6 py-4 text-center">No projects found</td>
+                </tr>
+            `;
+            return;
+        }
+
+        projects.forEach(project => {
+            // Tạo bản sao tên dự án để hiển thị
+            let displayName = project.project_name;
+
+            // Nếu có từ khóa tìm kiếm, tô màu nó
+            if (searchKeyword && searchKeyword.trim() !== '') {
+                const regex = new RegExp(`(${searchKeyword})`, 'gi');
+                displayName = displayName.replace(regex, '<span class="bg-yellow-200 text-black">$1</span>');
+            }
+
+            const row = `
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    <td class="w-4 p-4">
+                        <div class="flex items-center">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        </div>
+                    </td>
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        ${displayName}
+                    </th>
+                    <td class="px-6 py-4">
+                        ${new Date(project.updated_at).toLocaleString()}
+                    </td>
+                    <td class="px-6 py-4">
+                        ${new Date(project.created_at).toLocaleString()}
+                    </td>
+                    <td class="px-6 py-4">
+                        Active
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="/web/page/project?id=${project.project_id}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                    </td>
+                </tr>
+            `;
+            tableBody.insertAdjacentHTML('beforeend', row);
+        });
+    }
+
+    // Hàm sắp xếp dữ liệu dự án theo tùy chọn đã chọn
+    function sortProjects(projects, sortOption = currentSortOption) {
+        // Tạo một bản sao của mảng để tránh ảnh hưởng đến dữ liệu gốc
+        const sortedProjects = [...projects];
+
+        switch (sortOption) {
+            case 'name-asc':
+                sortedProjects.sort((a, b) => a.project_name.localeCompare(b.project_name));
+                break;
+            case 'name-desc':
+                sortedProjects.sort((a, b) => b.project_name.localeCompare(a.project_name));
+                break;
+            case 'updated-newest':
+                sortedProjects.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+                break;
+            case 'updated-oldest':
+                sortedProjects.sort((a, b) => new Date(a.updated_at) - new Date(b.updated_at));
+                break;
+            case 'created-newest':
+                sortedProjects.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                break;
+            case 'created-oldest':
+                sortedProjects.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+                break;
+            default:
+                // Mặc định sắp xếp theo tên A-Z
+                sortedProjects.sort((a, b) => a.project_name.localeCompare(b.project_name));
+        }
+
+        return sortedProjects;
+    }
+
+    // Hàm cập nhật chỉ báo sắp xếp hiện tại
+    function updateSortIndicator() {
+        const indicator = document.getElementById('current-sort');
+        let sortText = '';
+
+        switch (currentSortOption) {
+            case 'name-asc':
+                sortText = 'Sorted by: Name (A-Z)';
+                break;
+            case 'name-desc':
+                sortText = 'Sorted by: Name (Z-A)';
+                break;
+            case 'updated-newest':
+                sortText = 'Sorted by: Updated (Newest)';
+                break;
+            case 'updated-oldest':
+                sortText = 'Sorted by: Updated (Oldest)';
+                break;
+            case 'created-newest':
+                sortText = 'Sorted by: Created (Newest)';
+                break;
+            case 'created-oldest':
+                sortText = 'Sorted by: Created (Oldest)';
+                break;
+        }
+
+        indicator.textContent = sortText;
+    }
+
+    // Hàm tìm kiếm dự án theo tên
+    function searchProjects(keyword) {
+        currentSearchKeyword = keyword ? keyword.trim() : '';
+        sortAndRenderProjects();
+    }
+
+    // Hàm sắp xếp và hiển thị dự án (kết hợp tìm kiếm và sắp xếp)
+    function sortAndRenderProjects() {
+        let filteredProjects = projectsData;
+
+        // Áp dụng tìm kiếm nếu có
+        if (currentSearchKeyword !== '') {
+            const lowerKeyword = currentSearchKeyword.toLowerCase();
+            filteredProjects = projectsData.filter(project =>
+                project.project_name.toLowerCase().includes(lowerKeyword)
+            );
+        }
+
+        // Áp dụng sắp xếp
+        const sortedProjects = sortProjects(filteredProjects);
+
+        // Hiển thị kết quả
+        renderProjects(sortedProjects, currentSearchKeyword);
+    }
+
+    // Xử lý sự kiện tìm kiếm
+    document.getElementById('table-search').addEventListener('input', function (e) {
+        searchProjects(e.target.value);
+    });
+
+    // Xử lý sự kiện hiển thị/ẩn dropdown sắp xếp
+    document.getElementById('sort-dropdown-button').addEventListener('click', function () {
+        document.getElementById('sort-dropdown').classList.toggle('hidden');
+    });
+
+    // Xử lý sự kiện chọn tùy chọn sắp xếp
+    document.querySelectorAll('.sort-option').forEach(option => {
+        option.addEventListener('click', function () {
+            const sortOption = this.getAttribute('data-sort');
+            currentSortOption = sortOption;
+
+            // Ẩn dropdown
+            document.getElementById('sort-dropdown').classList.add('hidden');
+
+            // Cập nhật chỉ báo sắp xếp
+            updateSortIndicator();
+
+            // Sắp xếp và hiển thị lại dự án
+            sortAndRenderProjects();
+        });
+    });
+
+    // Ẩn dropdown khi nhấp vào bên ngoài
+    document.addEventListener('click', function (event) {
+        const dropdown = document.getElementById('sort-dropdown');
+        const button = document.getElementById('sort-dropdown-button');
+
+        if (!button.contains(event.target) && !dropdown.contains(event.target)) {
+            dropdown.classList.add('hidden');
+        }
+    });
+
+    // Tải danh sách dự án khi trang được tải
+    loadProjectList();
+</script>

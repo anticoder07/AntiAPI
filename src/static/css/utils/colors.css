@@ -17,3 +17,7 @@
 .api-delete {
     color: var(--api-delete);
 }
+
+.api-hello {
+    color: var(--api-delete);
+}
