@@ -11,19 +11,21 @@ base_api_url_auth = Blueprint('base_api_url_auth', __name__)
 @base_api_url_auth.route('/sign-up', methods=['POST'])
 def sign_up_controller():
     data = request.json
-    return ResponseHandler.success(create_account(data))
+    return ResponseHandler.success_without_message(create_account(data))
 
 
 @base_api_url_auth.route('/login', methods=['POST'])
 def login_controller():
     data = request.json
-    return ResponseHandler.success(login_company(data).to_dict())
+    return ResponseHandler.success_without_message(login_company(data))
+
 
 @base_api_url_auth.route('/log-out', methods=['POST'])
 @bearer_token_required
 def log_out_controller():
     auth_header = request.headers.get('Authorization')
-    return ResponseHandler.success(log_out_company(auth_header).to_dict())
+    return ResponseHandler.success_without_message(log_out_company(auth_header).to_dict())
+
 
 @base_api_url_auth.route('/ping', methods=['GET'])
 @jwt_required()
