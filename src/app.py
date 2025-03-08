@@ -24,6 +24,9 @@ def create_app():
     from src.controllers.api.topic_controller import base_api_url_topic
     app.register_blueprint(base_api_url_topic, url_prefix='/api/v1/topics')
 
+    from src.controllers.api.file_controller import base_api_url_file
+    app.register_blueprint(base_api_url_file, url_prefix='/api/v1/files')
+
     from src.controllers.api.api_controller import base_api_url_api
     app.register_blueprint(base_api_url_api, url_prefix='/api/v1/apis')
 

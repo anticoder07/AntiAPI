@@ -20,7 +20,7 @@ def login_controller():
     return ResponseHandler.success_without_message(login_company(data))
 
 
-@base_api_url_auth.route('/log-out', methods=['POST'])
+@base_api_url_auth.route('/log-out', methods=['GET'])
 @bearer_token_required
 def log_out_controller():
     auth_header = request.headers.get('Authorization')
