@@ -12,6 +12,10 @@
     overflow: hidden;
 }
 
+.popup-menu-bg {
+    background-color: var(--popup-bg);
+}
+
 .popup-menu.show {
     display: block;
     animation: fadeIn 0.2s ease-out;

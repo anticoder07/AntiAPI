@@ -44,7 +44,8 @@ def create_app():
     with app.app_context():
         db.create_all()
 
-    CORS(app, resources={r"/api/*": {"origins": "http://127.0.0.1:5000"}})
+    CORS(app, resources={r"/api/*": {"origins": ["http://127.0.0.1:5000", "http://localhost:5000"]}})
+
     JWTManager(app)
 
     return app

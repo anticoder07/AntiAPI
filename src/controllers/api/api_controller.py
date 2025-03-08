@@ -1,63 +1,30 @@
-from flask import Blueprint
-
+from flask import request, Blueprint
+from datetime import datetime
 from src.commons.security.token_required import bearer_token_required
+from src.payloads.responses.response_handler import ResponseHandler
 
 base_api_url_api = Blueprint('base_api_url_api', __name__)
 
-
-## Lưu ý: Nhớ check xem với người dùng có phải là người được phép truy cập api hay không
-
-# GET /api/v1/apis?id=
-# response: {
-# 	topic_id:
-# 	api_name:
-# 	api_type:
-# 	format_api:
-# 	endpoint:
-# }
-@base_api_url_api.route('', methods=['GET'])
-@bearer_token_required
-def take_api():
-    return None
-
-# GET /api/v1/apis?pid=
-# response: [{
-# 	topic_id:
-# 	api_name:
-# 	api_type:
-# 	format_api:
-# 	endpoint:
-# }]
 @base_api_url_api.route('', methods=['GET'])
 @bearer_token_required
 def take_apis():
-    return None
+    pid = request.args.get('tid')
 
-# POST /api/v1/apis
-# request: {
-# 	api_name:
-# 	api_type:
-# 	format_api:
-# 	endpoint:
-# }
-# response: {
-# 	topic_id:
-# 	api_name:
-# 	api_type:
-# 	format_api:
-# 	endpoint:
-# }
-@base_api_url_api.route('', methods=['POST'])
-@bearer_token_required
-def create_new_api():
-    return None
+    fake_data = [
+        {
+            "topic_id": pid if pid else "default_topic",
+            "api_name": f"API {pid} - 1" if pid else "API 1",
+            "api_type": "REST",
+            "format_api": "JSON",
+            "endpoint": f"/api/v1/apis/{pid}/data" if pid else "/api/v1/apis/1/data"
+        },
+        {
+            "topic_id": pid if pid else "default_topic",
+            "api_name": f"API {pid} - 2" if pid else "API 2",
+            "api_type": "GraphQL",
+            "format_api": "GraphQL",
+            "endpoint": f"/api/v1/apis/{pid}/query" if pid else "/api/v1/apis/2/query"
+        }
+    ]
 
-# DELETE /api/v1/apis
-# request: {
-# 	api_id:
-# }
-# response: "Delete api successfully"
-@base_api_url_api.route('', methods=['DELETE'])
-@bearer_token_required
-def delete_api():
-    return None
+    return ResponseHandler.success_without_message(fake_data)

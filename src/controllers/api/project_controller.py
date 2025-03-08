@@ -2,7 +2,7 @@ from flask import request, Blueprint
 
 from src.commons.security.token_required import bearer_token_required
 from src.payloads.responses.response_handler import ResponseHandler
-from src.services.project_service import create_project, get_projects, delete_project_service
+from src.services.project_service import create_project, get_projects, delete_project_service, get_project
 
 base_api_url_project = Blueprint('base_api_url_project', __name__)
 
@@ -19,6 +19,15 @@ def create_new_project():
 @bearer_token_required
 def take_projects():
     projects = get_projects()
+
+    return ResponseHandler.success_without_message(projects)
+
+
+@base_api_url_project.route('/single', methods=['GET'])
+@bearer_token_required
+def take_project():
+    pid = request.args.get('id')
+    projects = get_project(pid)
 
     return ResponseHandler.success_without_message(projects)
 

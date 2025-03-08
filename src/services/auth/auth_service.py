@@ -10,7 +10,7 @@ from src.models.e_customer_type import ECustomerType
 from src.payloads.dtos.company_dto import CompanyDto
 from src.payloads.responses.authentication_response import AuthenticationResponse
 from src.repositories.company_repository import get_company_by_username, save_company, exist_company_by_user_name
-from src.repositories.token_repository import save_token
+from src.repositories.token_repository import save_token, delete_token_by_value
 from src.services.auth.password_service import hash_password, verify_password
 
 
@@ -65,6 +65,11 @@ def login_company(data):
     )
 
     return auth_res
+
+
+def log_out_company(auth_header):
+    delete_token_by_value(auth_header)
+    return "Log out successfully"
 
 
 def validate_user_data_sign_up(data):

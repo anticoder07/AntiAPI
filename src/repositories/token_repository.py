@@ -17,3 +17,6 @@ def save_token(customer_id, customer_type, token, expires_at):
 
 def get_token_by_value(value):
     return Token.query.filter_by(token=value).first()
+
+def delete_token_by_value(auth_header):
+    Token.query.delete(token=auth_header)

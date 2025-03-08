@@ -56,6 +56,17 @@ def get_projects():
     return project_dto_list
 
 
+def get_project(pid):
+    company_id = g.company_id
+
+    project = get_project_by_project_id(pid)
+
+    if int(project.company_id) != int(company_id):
+        raise CustomException('Project authorization', HTTPStatus.UNAUTHORIZED)
+
+    return ProjectDto(project.to_dict()).to_dict()
+
+
 def delete_project_service(project_id):
     if project_id is None:
         raise CustomException("projectId cannot null", HTTPStatus.BAD_REQUEST)

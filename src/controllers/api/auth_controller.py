@@ -3,7 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from src.commons.security.token_required import bearer_token_required
 from src.payloads.responses.response_handler import ResponseHandler
-from src.services.auth.auth_service import create_account, login_company
+from src.services.auth.auth_service import create_account, login_company, log_out_company
 
 base_api_url_auth = Blueprint('base_api_url_auth', __name__)
 
@@ -19,6 +19,11 @@ def login_controller():
     data = request.json
     return ResponseHandler.success(login_company(data).to_dict())
 
+@base_api_url_auth.route('/log-out', methods=['POST'])
+@bearer_token_required
+def log_out_controller():
+    auth_header = request.headers.get('Authorization')
+    return ResponseHandler.success(log_out_company(auth_header).to_dict())
 
 @base_api_url_auth.route('/ping', methods=['GET'])
 @jwt_required()

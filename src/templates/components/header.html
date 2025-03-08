@@ -47,3 +47,95 @@
 
     loadCompanyInfo();
 </script>
+
+<script src="{{ url_for('static', filename='js/components/popup-menu.js') }}"></script>
+<script>
+    async function logout() {
+        try {
+            const msg = await fetchPost('/auth/log-out', {}, true);
+            console.log(msg);
+            if (msg.status === 'SUCCESS') {
+                window.location.href = "/web/login";
+            } else {
+                Notification.show(msg.message, 'error');
+            }
+        } catch (error) {
+            console.error('Error during company info fetch:', error);
+            Notification.show('An error occurred while fetching company info', 'error');
+        }
+    }
+</script>
+<script>
+// Function to properly get CSS variables with fallbacks
+function getCssVariable(variableName, fallback) {
+    // Get the variable value from the document root
+    let value = getComputedStyle(document.documentElement)
+        .getPropertyValue(variableName)
+        .trim();
+
+    // Return the value if it exists, otherwise return the fallback
+    return value || fallback;
+}
+
+// Get theme colors from CSS variables
+let textColor = getCssVariable('--text-color', '#333333');
+let iconColor = getCssVariable('--text-color', '#333333');
+let hoverColor = getCssVariable('--hover-color', '#dadada');
+
+console.log('Text color from CSS variable:', textColor);
+console.log('Icon color from CSS variable:', iconColor);
+console.log('Hover color from CSS variable:', hoverColor);
+
+let menuOptions = [
+    {
+        "icon": "fa-solid fa-diagram-project",
+        "icon-color": iconColor,
+        "content": "Project",
+        "content-color": textColor,
+        "bg-hover": hoverColor,
+        "action": function () {
+            window.location.href = '/web/page';
+        }
+    },
+    {
+        "icon": "fa-solid fa-bell",
+        "icon-color": iconColor,
+        "content": "Notifications",
+        "content-color": textColor,
+        "bg-hover": hoverColor,
+        "action": function () {
+            console.log("Notifications clicked");
+        }
+    },
+    {
+        "icon": "fa-solid fa-right-from-bracket",
+        "icon-color": iconColor,
+        "content": "Log out",
+        "content-color": textColor,
+        "bg-hover": hoverColor,
+        "action": function () {
+            logout();
+        }
+    }
+];
+
+menuToggle.addEventListener('click', function () {
+    // Re-get the colors in case theme has changed
+    let currentTextColor = getCssVariable('--text-color', '#333333');
+    let currentIconColor = getCssVariable('--text-color', '#333333');
+    let currentHoverColor = getCssVariable('--hover-bg ', '#f0f0f0');
+
+    // Update menu options with current colors
+    menuOptions.forEach(option => {
+        option["content-color"] = currentTextColor;
+        option["icon-color"] = currentIconColor;
+        option["bg-hover"] = currentHoverColor;  // Update hover color too
+    });
+
+    let setting = {
+        "location-lb": "-30px 2px",
+        "classname-extend": "popup-menu-bg"
+    };
+    setPopupMenu(menuOptions, setting, menuToggle);
+});
+</script>
