@@ -10,7 +10,7 @@ class Api(db.Model):
     topic_id = db.Column('TopicId', db.Integer, db.ForeignKey('Topic.TopicId'), nullable=False)
     api_name = db.Column('ApiName', db.String(255), nullable=False)
     api_type = db.Column('ApiType', db.String(255), nullable=False)
-    format_api = db.Column('FormatApi', db.String(255), nullable=False)
+    format_api = db.Column('FormatApi', db.Text, nullable=False)
     endpoint = db.Column('Endpoint', db.String(255), nullable=False)
     created_at = db.Column('CreateAt', db.DateTime, default=datetime.utcnow)
 

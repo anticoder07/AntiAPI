@@ -1,0 +1,39 @@
+{
+  "path_variable": [
+    {"type": "String", "default_value": ["Hello", "hi"]},
+    {"type": "Number", "default_value": [1, 2] },
+  ],
+  "arg": [
+    {"arg_key": "arg1", "arg_type": "string", "default_value": ["Hello", "ba"]},
+    {"arg_key": "arg2", "arg_type": "number", "default_value": [1]}
+  ],
+  "body": {
+    "category": {
+      "type": "string",
+      "default_value": ["Hello"]
+    },
+    "price_range": {
+      "type": "string",
+    },
+    "links": {
+      "type": "array",
+      "items": "String"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+            "default_value": ["Hello", "hi"]
+          },
+          "value": {
+            "type": "string"
+            "default_value": ["Huong", "hung"]
+          }
+        },
+      }
+    }
+  }
+}
