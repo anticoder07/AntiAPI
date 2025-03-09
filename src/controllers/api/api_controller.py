@@ -2,7 +2,7 @@ from flask import Blueprint, request
 
 from src.commons.security.token_required import bearer_token_required
 from src.payloads.responses.response_handler import ResponseHandler
-from src.services.api_service import create_new_api_service, delete_api_service, get_apis_service, get_api_service
+from src.services.api.api_service import create_new_api_service, delete_api_service, get_apis_service, get_api_service
 
 base_api_url_api = Blueprint('base_api_url_api', __name__)
 

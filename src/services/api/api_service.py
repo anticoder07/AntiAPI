@@ -111,6 +111,91 @@ def delete_api_service(data):
         raise CustomException(f"Unexpected error: {str(e)}", HTTPStatus.INTERNAL_SERVER_ERROR)
 
 
+# def validate_api_format(json_string):
+#     try:
+#         # Split JSON string into lines for line number tracking
+#         lines = json_string.strip().split('\n')
+#
+#         # Parse JSON
+#         data = json.loads(json_string)
+#
+#         # Check main keys
+#         required_keys = ["path_variable", "arg", "body"]
+#         for key in required_keys:
+#             if key not in data:
+#                 line_num = find_line_number(lines, f'"{key}"')
+#                 return line_num if line_num != -1 else 1
+#
+#         # Validate path_variable
+#         if not isinstance(data["path_variable"], list):
+#             line_num = find_line_number(lines, '"path_variable"')
+#             return line_num
+#
+#         for i, item in enumerate(data["path_variable"]):
+#             if not isinstance(item, dict):
+#                 line_num = find_element_line(lines, "path_variable", i)
+#                 return line_num
+#
+#             # Check required fields for path_variable items
+#             required_fields = ["type", "default_value"]
+#             for field in required_fields:
+#                 if field not in item:
+#                     line_num = find_element_line(lines, "path_variable", i)
+#                     return line_num
+#
+#             # Check default_value is a list
+#             if not isinstance(item["default_value"], list):
+#                 line_num = find_line_number(lines, '"default_value"', find_element_line(lines, "path_variable", i))
+#                 return line_num
+#
+#         # Validate arg
+#         if not isinstance(data["arg"], list):
+#             line_num = find_line_number(lines, '"arg"')
+#             return line_num
+#
+#         for i, arg in enumerate(data["arg"]):
+#             if not isinstance(arg, dict):
+#                 line_num = find_element_line(lines, "arg", i)
+#                 return line_num
+#
+#             required_arg_keys = ["arg_key", "arg_type", "default_value"]
+#             for key in required_arg_keys:
+#                 if key not in arg:
+#                     line_num = find_element_line(lines, "arg", i)
+#                     return line_num
+#
+#             if not isinstance(arg["arg_key"], str):
+#                 line_num = find_line_number(lines, f'"arg_key"', find_element_line(lines, "arg", i))
+#                 return line_num
+#
+#             if not isinstance(arg["arg_type"], str):
+#                 line_num = find_line_number(lines, f'"arg_type"', find_element_line(lines, "arg", i))
+#                 return line_num
+#
+#             if not isinstance(arg["default_value"], list):
+#                 line_num = find_line_number(lines, f'"default_value"', find_element_line(lines, "arg", i))
+#                 return line_num
+#
+#         # Validate body
+#         if not isinstance(data["body"], dict):
+#             line_num = find_line_number(lines, '"body"')
+#             return line_num
+#
+#         result = validate_body_structure(data["body"], lines, "body")
+#         if result != -1:
+#             return result
+#
+#         # If no errors, return -1
+#         return -1
+#
+#     except json.JSONDecodeError as e:
+#         # Return line with JSON syntax error
+#         return e.lineno
+#     except Exception:
+#         # If there's another error, return line 1
+#         return 1
+
+
 def validate_api_format(json_string):
     try:
         # Split JSON string into lines for line number tracking
@@ -119,71 +204,71 @@ def validate_api_format(json_string):
         # Parse JSON
         data = json.loads(json_string)
 
-        # Check main keys
-        required_keys = ["path_variable", "arg", "body"]
-        for key in required_keys:
-            if key not in data:
-                line_num = find_line_number(lines, f'"{key}"')
-                return line_num if line_num != -1 else 1
+        # Check that data is a dictionary
+        if not isinstance(data, dict):
+            return 1
 
-        # Validate path_variable
-        if not isinstance(data["path_variable"], list):
-            line_num = find_line_number(lines, '"path_variable"')
-            return line_num
-
-        for i, item in enumerate(data["path_variable"]):
-            if not isinstance(item, dict):
-                line_num = find_element_line(lines, "path_variable", i)
+        # Validate path_variable if it exists
+        if "path_variable" in data:
+            if not isinstance(data["path_variable"], list):
+                line_num = find_line_number(lines, '"path_variable"')
                 return line_num
 
-            # Check required fields for path_variable items
-            required_fields = ["type", "default_value"]
-            for field in required_fields:
-                if field not in item:
+            for i, item in enumerate(data["path_variable"]):
+                if not isinstance(item, dict):
                     line_num = find_element_line(lines, "path_variable", i)
                     return line_num
 
-            # Check default_value is a list
-            if not isinstance(item["default_value"], list):
-                line_num = find_line_number(lines, '"default_value"', find_element_line(lines, "path_variable", i))
+                # Check required fields for path_variable items
+                required_fields = ["type", "default_value"]
+                for field in required_fields:
+                    if field not in item:
+                        line_num = find_element_line(lines, "path_variable", i)
+                        return line_num
+
+                # Check default_value is a list
+                if not isinstance(item["default_value"], list):
+                    line_num = find_line_number(lines, '"default_value"', find_element_line(lines, "path_variable", i))
+                    return line_num
+
+        # Validate arg if it exists
+        if "arg" in data:
+            if not isinstance(data["arg"], list):
+                line_num = find_line_number(lines, '"arg"')
                 return line_num
 
-        # Validate arg
-        if not isinstance(data["arg"], list):
-            line_num = find_line_number(lines, '"arg"')
-            return line_num
-
-        for i, arg in enumerate(data["arg"]):
-            if not isinstance(arg, dict):
-                line_num = find_element_line(lines, "arg", i)
-                return line_num
-
-            required_arg_keys = ["arg_key", "arg_type", "default_value"]
-            for key in required_arg_keys:
-                if key not in arg:
+            for i, arg in enumerate(data["arg"]):
+                if not isinstance(arg, dict):
                     line_num = find_element_line(lines, "arg", i)
                     return line_num
 
-            if not isinstance(arg["arg_key"], str):
-                line_num = find_line_number(lines, f'"arg_key"', find_element_line(lines, "arg", i))
+                required_arg_keys = ["arg_key", "arg_type", "default_value"]
+                for key in required_arg_keys:
+                    if key not in arg:
+                        line_num = find_element_line(lines, "arg", i)
+                        return line_num
+
+                if not isinstance(arg["arg_key"], str):
+                    line_num = find_line_number(lines, f'"arg_key"', find_element_line(lines, "arg", i))
+                    return line_num
+
+                if not isinstance(arg["arg_type"], str):
+                    line_num = find_line_number(lines, f'"arg_type"', find_element_line(lines, "arg", i))
+                    return line_num
+
+                if not isinstance(arg["default_value"], list):
+                    line_num = find_line_number(lines, f'"default_value"', find_element_line(lines, "arg", i))
+                    return line_num
+
+        # Validate body if it exists
+        if "body" in data:
+            if not isinstance(data["body"], dict):
+                line_num = find_line_number(lines, '"body"')
                 return line_num
 
-            if not isinstance(arg["arg_type"], str):
-                line_num = find_line_number(lines, f'"arg_type"', find_element_line(lines, "arg", i))
-                return line_num
-
-            if not isinstance(arg["default_value"], list):
-                line_num = find_line_number(lines, f'"default_value"', find_element_line(lines, "arg", i))
-                return line_num
-
-        # Validate body
-        if not isinstance(data["body"], dict):
-            line_num = find_line_number(lines, '"body"')
-            return line_num
-
-        result = validate_body_structure(data["body"], lines, "body")
-        if result != -1:
-            return result
+            result = validate_body_structure(data["body"], lines, "body")
+            if result != -1:
+                return result
 
         # If no errors, return -1
         return -1
@@ -194,7 +279,6 @@ def validate_api_format(json_string):
     except Exception:
         # If there's another error, return line 1
         return 1
-
 
 def validate_body_structure(body, lines, path):
     for key, value in body.items():
