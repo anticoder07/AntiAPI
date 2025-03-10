@@ -32,7 +32,7 @@ def page_render_scan():
         'base/layout.html',
         api_type='SCAN',
         api_endpoint='ANTIAPI',
-        content_template='pages/scan-page.html',
+        content_template='pages/analist-page.html',
         sidebar_template='',
         title_hide='NO',
     )

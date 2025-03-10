@@ -33,6 +33,13 @@ def update_project_name(project_id, project_name):
         db.session.commit()
     return project
 
+def update_project_base_url(project_id, base_url):
+    project = get_project_by_project_id(project_id)
+    if project:
+        project.base_url = base_url
+        project.updated_at = datetime.utcnow()
+        db.session.commit()
+    return project
 
 def delete_project_by_project_id(project_id):
     project = get_project_by_project_id(project_id)

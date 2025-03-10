@@ -1,0 +1,562 @@
+<style>
+    .scanner-container {
+        background-color: #3d4c6f;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 2px;
+        padding-bottom: 8px;
+        padding-top: 8px;
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .scanner-text {
+        color: white;
+        font-weight: bold;
+        margin-left: 12px;
+        font-family: Arial, sans-serif;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+    }
+
+    .scanner-line {
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        background-color: rgba(0, 255, 209, 0.7);
+        top: 0;
+        left: 0;
+        box-shadow: 0 0 8px 2px rgba(0, 255, 209, 0.7);
+        animation: scan 1.5s linear infinite;
+        z-index: 1;
+    }
+
+    .loading-dots {
+        display: inline-flex;
+        margin-left: 8px;
+    }
+
+    .dot {
+        width: 6px;
+        height: 6px;
+        margin: 0 2px;
+        background-color: white;
+        border-radius: 50%;
+        opacity: 0.7;
+        display: inline-block;
+    }
+
+    .dot:nth-child(1) {
+        animation: dots 1.5s infinite;
+        animation-delay: 0s;
+    }
+
+    .dot:nth-child(2) {
+        animation: dots 1.5s infinite;
+        animation-delay: 0.3s;
+    }
+
+    .dot:nth-child(3) {
+        animation: dots 1.5s infinite;
+        animation-delay: 0.6s;
+    }
+
+    @keyframes scan {
+        0% {
+            top: 0;
+        }
+        50% {
+            top: 100%;
+        }
+        50.001% {
+            top: 100%;
+        }
+        100% {
+            top: 0;
+        }
+    }
+
+    @keyframes dots {
+        0% {
+            opacity: 0.2;
+        }
+        50% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0.2;
+        }
+    }
+
+    .hide {
+        display: none;
+    }
+</style>
+<div class="relative overflow-x-auto shadow-md sm:rounded-none">
+    <div class="scanner-container hide" id="scanner-loading">
+        <div class="scanner-line"></div>
+        <div class="scanner-text">
+            Scanner
+            <div class="loading-dots">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+        </div>
+    </div>
+    <div class="pb-1 dark:bg-gray-900 p-2 flex flex-wrap items-center gap-2 pb-2" style="background-color: #3d4c6f">
+        <!-- Improved search bar with better spacing -->
+        <div class="relative">
+            <div class="flex">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"></path>
+                    </svg>
+                </div>
+                <input type="text" id="table-search"
+                       class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-64 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                       placeholder="Search for items">
+            </div>
+        </div>
+
+        <!-- Sort options dropdown -->
+        <div class="relative">
+            <button id="sort-dropdown-button"
+                    class="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-4 py-2 text-center inline-flex items-center"
+                    type="button">
+                Sort by
+                <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 10 6">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="m1 1 4 4 4-4"/>
+                </svg>
+            </button>
+            <div id="sort-dropdown"
+                 class="z-10 hidden absolute bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="sort-dropdown-button">
+                    <li>
+                        <button type="button"
+                                class="sort-option w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-left"
+                                data-sort="high-danger">
+                            High Danger
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button"
+                                class="sort-option w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-left"
+                                data-sort="medium-danger">
+                            Medium Danger
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button"
+                                class="sort-option w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-left"
+                                data-sort="low-danger">
+                            Low Danger
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <button type="button"
+                class="text-white bg-blue-400 dark:bg-blue-500 font-medium rounded-lg text-sm px-4 py-2 text-center"
+                onclick="popupController.open()"
+        >Start Scanner
+
+        </button>
+
+        <span id="current-sort" class="text-white text-xs ml-2"></span>
+
+        <button type="button"
+                class="text-white bg-green-700 hover:bg-green-800 font-medium rounded-lg text-sm px-4 py-2 text-center"
+        >Add Protect
+        </button>
+    </div>
+
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+            <th scope="col" class="p-4">
+                <div class="flex items-center">
+                    <input id="checkbox-all-search" type="checkbox"
+                           class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                    <label for="checkbox-all-search" class="sr-only">checkbox</label>
+                </div>
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Payload
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Request
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Response
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Status
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Severity
+            </th>
+        </tr>
+        </thead>
+        <tbody id="project-list">
+        </tbody>
+    </table>
+</div>
+
+<script src="{{ url_for('static', filename='js/utils/fetch-api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/components/popup-input.js') }}"></script>
+<script src="{{ url_for('static', filename='js/components/notification.js') }}"></script>
+<script>
+    let scannerLoading = document.getElementById("scanner-loading")
+    let fields = [
+        {label: "Base Url", key: "BaseUrl", placeholder: "Base url input"},
+    ];
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const pid = urlParams.get('pid');
+
+    const handleSubmit = (data) => {
+        async function startScan() {
+            try {
+                scannerLoading.classList.remove("hide");
+                const msg = await fetchPost('/scans', {
+                    "base_url": data.BaseUrl,
+                    "project_id": pid
+                }, true);
+                if (msg.status === 'SUCCESS') {
+                    scannerLoading.classList.add("hide");
+                    console.log(msg.data);
+
+                    // Process the scan results
+                    processScanResults(msg.data);
+
+                    Notification.show(msg.message, 'success');
+                } else {
+                    scannerLoading.classList.add("hide");
+                    Notification.show(msg.message, 'error');
+                }
+            } catch (error) {
+                scannerLoading.classList.add("hide");
+                console.error('Error during scan:', error);
+                Notification.show('An error occurred during the scan', 'error');
+            }
+        }
+
+        startScan();
+    };
+
+    const popupController = createPopup(handleSubmit, fields, 'Project Input');
+</script>
+<script>
+    function processScanResults(data) {
+        // Clear existing results
+        projectsData = [];
+
+        // Add high danger responses to data
+        if (data.high_danger_responses && data.high_danger_responses.length > 0) {
+            projectsData = projectsData.concat(data.high_danger_responses.map(item => ({
+                ...item,
+                severity: 'high'
+            })));
+        }
+
+        // Add medium danger responses if they exist
+        if (data.medium_danger_responses && data.medium_danger_responses.length > 0) {
+            projectsData = projectsData.concat(data.medium_danger_responses.map(item => ({
+                ...item,
+                severity: 'medium'
+            })));
+        }
+
+        // Add medium danger responses if they exist
+        if (data.low_danger_responses && data.low_danger_responses.length > 0) {
+            projectsData = projectsData.concat(data.low_danger_responses.map(item => ({
+                ...item,
+                severity: 'low'
+            })));
+        }
+
+        // Update summary information (you could display this somewhere if needed)
+        const scanSummary = {
+            normalResponses: data.normal_responses || 0,
+            suspiciousResponses: data.suspicious_responses || 0,
+            totalScanned: data.total_apis_scanned || 0
+        };
+
+        // Sort and render the projects
+        sortAndRenderProjects();
+    }
+
+</script>
+<script>
+    let projectsData = [];
+    let currentSearchKeyword = '';
+    let currentSortOption = 'high-danger';
+
+    let selectedItems = []; // Mảng lưu giá trị checkbox đã chọn
+
+    function toggleCheckbox(api_id, value) {
+        console.log(api_id);
+        console.log(value);
+    }
+
+    function renderProjects(projects, searchKeyword = '') {
+        const tableBody = document.getElementById('project-list');
+        tableBody.innerHTML = ''; // Clear existing content
+
+        if (projects.length === 0) {
+            tableBody.innerHTML = `
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <td colspan="6" class="px-6 py-4 text-center">No vulnerabilities found</td>
+            </tr>
+        `;
+            return;
+        }
+
+        projects.forEach(project => {
+            console.log("--------------------")
+            console.log(project)
+            let payload = project.payload || 'N/A';
+            let request = JSON.stringify(project.request || {}).substring(0, 50) + '...';
+            let response = project.response || 'N/A';
+            let api_id = project.api_id
+
+            // Truncate response if too long (for display in table)
+            let displayResponse = response.length > 50 ? response.substring(0, 50) + '...' : response;
+
+            // Highlight search terms if provided
+            if (searchKeyword && searchKeyword.trim() !== '') {
+                const regex = new RegExp(`(${searchKeyword})`, 'gi');
+                payload = payload.replace(regex, '<span class="bg-yellow-200 text-black">$1</span>');
+                request = request.replace(regex, '<span class="bg-yellow-200 text-black">$1</span>');
+                displayResponse = displayResponse.replace(regex, '<span class="bg-yellow-200 text-black">$1</span>');
+            }
+
+            // Set severity class
+            let severityClass = 'bg-gray-100';
+            let severityText = 'Unknown';
+
+            if (project.severity === 'high' || project.danger_level === 'high') {
+                severityClass = 'bg-red-100 text-red-800';
+                severityText = 'High';
+            } else if (project.severity === 'medium' || project.danger_level === 'medium') {
+                severityClass = 'bg-yellow-100 text-yellow-800';
+                severityText = 'Medium';
+            } else if (project.severity === 'low' || project.danger_level === 'low') {
+                severityClass = 'bg-green-100 text-green-800';
+                severityText = 'Low';
+            }
+
+            const row = `
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <td class="w-4 p-4">
+                    <div class="flex items-center">
+                        <input type="checkbox"
+                         onclick="toggleCheckbox('${project.api_id}', '${payload.replace(/'/g, "\\'")}')"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                    </div>
+                </td>
+                <td class="px-6 py-4 font-medium text-black-900 whitespace-nowrap dark:text-white">
+                    ${payload}
+                </td>
+                <td class="px-6 py-4">
+                    <span class="cursor-pointer text-blue-600 hover:underline"
+                          onclick="showDetailsPopup('Request Details', ${JSON.stringify(project.request).replace(/"/g, '&quot;')})">
+                        ${request}
+                    </span>
+                </td>
+                <td class="px-6 py-4">
+                    <span class="cursor-pointer text-blue-600 hover:underline"
+                          onclick="showDetailsPopup('Response Details', ${JSON.stringify(project.response).replace(/"/g, '&quot;')})">
+                        ${displayResponse}
+                    </span>
+                </td>
+                <td class="px-6 py-4">
+                    ${project.status || 'N/A'}
+                </td>
+                <td class="px-6 py-4">
+                    <span class="px-2 py-1 rounded ${severityClass}">
+                        ${severityText}
+                    </span>
+                </td>
+            </tr>
+        `;
+            tableBody.insertAdjacentHTML('beforeend', row);
+        });
+    }
+
+    function showDetailsPopup(title, content) {
+        // Create modal elements
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50';
+
+        const modalContent = document.createElement('div');
+        modalContent.className = 'bg-white rounded-lg shadow-xl max-w-3xl w-full mx-4 max-h-[80vh] overflow-y-auto';
+
+        // Create header
+        const header = document.createElement('div');
+        header.className = 'flex items-center justify-between p-4 border-b';
+
+        const titleElement = document.createElement('h3');
+        titleElement.className = 'text-xl font-semibold text-gray-900';
+        titleElement.textContent = title;
+
+        const closeButton = document.createElement('button');
+        closeButton.className = 'text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center';
+        closeButton.innerHTML = '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>';
+        closeButton.onclick = () => modal.remove();
+
+        header.appendChild(titleElement);
+        header.appendChild(closeButton);
+
+        // Create body
+        const body = document.createElement('div');
+        body.className = 'p-6';
+
+        let parsedContent;
+        try {
+            parsedContent = JSON.parse(content);
+            const pre = document.createElement('pre');
+            pre.className = 'bg-gray-100 p-4 rounded overflow-x-auto';
+            pre.textContent = JSON.stringify(parsedContent, null, 2);
+            body.appendChild(pre);
+        } catch (e) {
+            // If not JSON, just display as is
+            if (content.startsWith('<')) {
+                // Handle HTML content
+                body.innerHTML = `<div class="bg-gray-100 p-4 rounded overflow-x-auto text-black"><code class="text-black">${content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></div>`;
+            } else {
+                body.innerHTML = `<div class="bg-gray-100 p-4 rounded overflow-x-auto text-black"><pre>${content}</pre></div>`;
+            }
+        }
+
+        // Assemble modal
+        modalContent.appendChild(header);
+        modalContent.appendChild(body);
+        modal.appendChild(modalContent);
+
+        // Add to document
+        document.body.appendChild(modal);
+
+        // Close when clicking outside
+        modal.addEventListener('click', function (event) {
+            if (event.target === modal) {
+                modal.remove();
+            }
+        });
+    }
+
+    function sortProjects(projects, sortOption = currentSortOption) {
+        const sortedProjects = [...projects];
+
+        switch (sortOption) {
+            case 'high-danger':
+                sortedProjects.sort((a, b) => {
+                    const severityOrder = {'high': 0, 'medium': 1, 'low': 2};
+                    const aSeverity = a.severity || a.danger_level || 'low';
+                    const bSeverity = b.severity || b.danger_level || 'low';
+
+                    return severityOrder[aSeverity] - severityOrder[bSeverity];
+                });
+                break;
+            case 'medium-danger':
+                sortedProjects.sort((a, b) => {
+                    return (a.payload || '').localeCompare(b.payload || '');
+                });
+                break;
+            case 'low-danger':
+                sortedProjects.sort((a, b) => {
+                    return (b.response_time || 0) - (a.response_time || 0);
+                });
+                break;
+            default:
+                sortedProjects.sort((a, b) => {
+                    const severityOrder = {'high': 0, 'medium': 1, 'low': 2};
+                    const aSeverity = a.severity || a.danger_level || 'low';
+                    const bSeverity = b.severity || b.danger_level || 'low';
+
+                    return severityOrder[aSeverity] - severityOrder[bSeverity];
+                });
+        }
+
+        return sortedProjects;
+    }
+
+    function updateSortIndicator() {
+        const indicator = document.getElementById('current-sort');
+        let sortText = '';
+
+        switch (currentSortOption) {
+            case 'high-danger':
+                sortText = 'Sorted by: Severity (High to Low)';
+                break;
+            case 'medium-danger':
+                sortText = 'Sorted by: Payload (A-Z)';
+                break;
+            case 'low-danger':
+                sortText = 'Sorted by: Response Time';
+                break;
+        }
+
+        indicator.textContent = sortText;
+    }
+
+    function searchProjects(keyword) {
+        currentSearchKeyword = keyword ? keyword.trim() : '';
+        sortAndRenderProjects();
+    }
+
+    function sortAndRenderProjects() {
+        let filteredProjects = projectsData;
+
+        if (currentSearchKeyword !== '') {
+            const lowerKeyword = currentSearchKeyword.toLowerCase();
+            filteredProjects = projectsData.filter(project =>
+                project.project_name.toLowerCase().includes(lowerKeyword)
+            );
+        }
+
+        const sortedProjects = sortProjects(filteredProjects);
+
+        renderProjects(sortedProjects, currentSearchKeyword);
+    }
+
+    document.getElementById('table-search').addEventListener('input', function (e) {
+        searchProjects(e.target.value);
+    });
+
+
+    document.getElementById('sort-dropdown-button').addEventListener('click', function () {
+        document.getElementById('sort-dropdown').classList.toggle('hidden');
+    });
+
+    document.querySelectorAll('.sort-option').forEach(option => {
+        option.addEventListener('click', function () {
+            const sortOption = this.getAttribute('data-sort');
+            currentSortOption = sortOption;
+
+            document.getElementById('sort-dropdown').classList.add('hidden');
+
+            updateSortIndicator();
+
+            sortAndRenderProjects();
+        });
+    });
+
+    document.addEventListener('click', function (event) {
+        const dropdown = document.getElementById('sort-dropdown');
+        const button = document.getElementById('sort-dropdown-button');
+        updateSortIndicator();
+        if (!button.contains(event.target) && !dropdown.contains(event.target)) {
+            dropdown.classList.add('hidden');
+        }
+    });
+</script>

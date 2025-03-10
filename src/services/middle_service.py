@@ -2,12 +2,53 @@ import json
 from http import HTTPStatus
 
 import requests
+from flask import g
 
 from src.commons.exception.custom_exception.custom_exception import CustomException
 from src.repositories.api_repository import get_api_by_api_id
+from src.repositories.project_repository import get_project_by_project_id, update_project_base_url
+from src.repositories.topic_repository import get_topic_by_topic_id
 from src.repositories.vul_repository import get_vuls
 from src.services.protect.regex_service import validate_requests
 from src.services.scan.format_api_handler_service import get_element_names
+
+
+def enable_middleware(data):
+    project_id = data['project_id']
+    if project_id is None:
+        raise CustomException('project_id is required', HTTPStatus.BAD_REQUEST)
+
+    base_url = data['base_url']
+    if base_url is None:
+        raise CustomException('base_url is required', HTTPStatus.BAD_REQUEST)
+
+    project = get_project_by_project_id(project_id)
+    if project is None:
+        raise CustomException('project_id is not found', HTTPStatus.NOT_FOUND)
+
+    if str(project.project_id) != str(g.company_id):
+        raise CustomException('project_id is not found', HTTPStatus.NOT_FOUND)
+
+    update_project_base_url(project_id, base_url)
+
+    return {"Enable middleware": True}
+
+
+def disable_middleware(data):
+    project_id = data['project_id']
+    if project_id is None:
+        raise CustomException('project_id is required', HTTPStatus.BAD_REQUEST)
+
+    project = get_project_by_project_id(project_id)
+    if project is None:
+        raise CustomException('project_id is not found', HTTPStatus.NOT_FOUND)
+
+    if str(project.project_id) != str(g.company_id):
+        raise CustomException('project_id is not found', HTTPStatus.NOT_FOUND)
+
+    update_project_base_url(project_id, None)
+
+    return {"Disable middleware": True}
 
 
 def handler_request(api_id, endpoint, body, http_method, full_request):
@@ -17,6 +58,14 @@ def handler_request(api_id, endpoint, body, http_method, full_request):
     api = get_api_by_api_id(int(api_id))
     if api is None:
         raise CustomException("Http not found", HTTPStatus.NOT_FOUND)
+
+    topic_id = get_topic_by_topic_id(api.topic_id)
+    topic = get_topic_by_topic_id(topic_id)
+    project = get_project_by_project_id(topic.project_id)
+    base_url = project.base_url
+    if base_url is None:
+        raise CustomException('Service not run', HTTPStatus.BAD_REQUEST)
+
     format_api = json.loads(api.format_api)
     endpoint_api = api.endpoint
     vuls = get_vuls(api_id)
@@ -82,12 +131,11 @@ def handler_request(api_id, endpoint, body, http_method, full_request):
                         if not validate_requests(path_variables[type_key], vul.regex):
                             raise CustomException("Invalid path parameter", HTTPStatus.BAD_REQUEST)
 
-    return send_request(http_method, endpoint, full_request)
+    return send_request(http_method, endpoint, full_request, base_url)
 
 
-def send_request(method, endpoint, full_request):
-    BASE_URL = "test"
-    url = f"{BASE_URL}/{endpoint}"
+def send_request(method, endpoint, full_request, base_url):
+    url = f"{base_url}/{endpoint}"
 
     try:
         response = requests.request(
