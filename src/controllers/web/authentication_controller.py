@@ -25,10 +25,22 @@ def page_render_project():
         api_endpoint=''
     )
 
+@base_web_url.route('/page/scan', methods=['GET'])
+def page_render_scan():
+    api_endpoint = request.args.get('pid')
+    return render_template(
+        'base/layout.html',
+        api_type='SCAN',
+        api_endpoint='ANTIAPI',
+        content_template='pages/scan-page.html',
+        sidebar_template='',
+        title_hide='NO',
+    )
+
 
 @base_web_url.route('/page/<api_type>', methods=['GET'])
 def page_render(api_type):
-    api_endpoint = request.args.get('ae', '/api/v1/resource')
+    api_endpoint = request.args.get('ae', '/scan/v1/resource')
     return render_template(
         'base/layout.html',
         api_type=api_type,

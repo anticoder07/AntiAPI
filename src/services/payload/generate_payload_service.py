@@ -2,7 +2,7 @@ import itertools
 import random
 import string
 
-from src.services.api.format_api_handler_service import get_element_count, get_default_values, get_element_type
+from src.services.scan.format_api_handler_service import get_element_count, get_default_values, get_element_type
 
 
 def generate_datas_payload_vul(payload, format_api):
@@ -45,7 +45,8 @@ def generate_simple_test_data(format_api, payload, limit):
 
     return result
 
-def make_datas_payload_success(format_api):
+
+def generate_datas_payload_success(format_api):
     count = get_element_count(format_api)
     datas_default = get_default_values(format_api)
     datas_type = get_element_type(format_api)

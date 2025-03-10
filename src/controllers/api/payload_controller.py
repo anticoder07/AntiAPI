@@ -5,7 +5,7 @@ from src.commons.security.token_required import bearer_token_required
 base_api_url_payload = Blueprint('base_api_url_payload', __name__)
 
 
-# GET /api/v1/payloads?id=
+# GET /scan/v1/payloads?id=
 # response: {
 #   "payload_id":
 # 	"payload_content":
@@ -19,7 +19,7 @@ def take_payload():
     return None
 
 
-# GET /api/v1/payloads?id=
+# GET /scan/v1/payloads?id=
 # response: [{
 #   "payload_id":
 # 	"payload_content":
@@ -33,7 +33,7 @@ def take_payloads():
     return None
 
 
-# POST /api/v1/payloads
+# POST /scan/v1/payloads
 # request:{
 # 	"payload_content":
 # 	"payload_type":
@@ -53,7 +53,7 @@ def create_new_payload():
     return None
 
 
-# POST /api/v1/payloads
+# POST /scan/v1/payloads
 # request:{
 #   "payload_id":
 # 	"payload_content":
@@ -74,7 +74,7 @@ def change_payload():
     return None
 
 
-# DELETE /api/v1/payloads
+# DELETE /scan/v1/payloads
 # request: {
 #   "payload_id":
 # }

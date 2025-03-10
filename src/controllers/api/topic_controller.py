@@ -8,7 +8,7 @@ from src.services.topic_service import create_topic_service, take_topic_service,
 base_api_url_topic = Blueprint('base_api_url_topic', __name__)
 
 
-# GET /api/v1/topics?pid=
+# GET /scan/v1/topics?pid=
 # response: [{
 #   topic_id:
 # 	topic_name:
@@ -26,7 +26,7 @@ def take_topics():
     return ResponseHandler.success_without_message(data)
 
 
-# POST /api/v1/topics
+# POST /scan/v1/topics
 # request: {
 #   project_id:
 #   topic_name:
@@ -45,7 +45,7 @@ def create_new_topic():
     return ResponseHandler.success_without_message(topic)
 
 
-# PATCH /api/v1/topics
+# PATCH /scan/v1/topics
 # request: {
 #   topic_id:
 #   topic_name:
@@ -64,7 +64,7 @@ def change_topic_name():
     return ResponseHandler.success_without_message(topic)
 
 
-# DELETE /api/v1/topics
+# DELETE /scan/v1/topics
 # request: {
 #     topic_id:
 # }

@@ -4,8 +4,8 @@ from flask import Blueprint, request
 
 from src.commons.security.token_required import bearer_token_required
 from src.payloads.responses.response_handler import ResponseHandler
-from src.services.api.scan_second_service import scan_api_2
-from src.services.api.scan_service import scan_api
+from src.services.scan.scan_second_service import scan_api_2
+from src.services.scan.scan_service import scan_api
 
 base_api_url_scan = Blueprint('base_api_url_scan', __name__)
 

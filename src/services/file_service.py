@@ -7,7 +7,7 @@ from src.commons.exception.custom_exception.custom_exception import CustomExcept
 from src.repositories.api_repository import create_api
 from src.repositories.project_repository import get_project_by_project_id
 from src.repositories.topic_repository import create_topic
-from src.services.api.api_service import validate_api_format
+from src.services.api_service import validate_api_format
 
 
 def process_save_data(data, project_id):
@@ -29,7 +29,7 @@ def process_save_data(data, project_id):
         for api in topic["apis"]:
             line = validate_api_format(str(api.get('format_api')))
             if line != -1:
-                raise CustomException("Format api wrong in line: " + line, HTTPStatus.BAD_REQUEST)
+                raise CustomException("Format scan wrong in line: " + line, HTTPStatus.BAD_REQUEST)
             api_new = create_api(
                 topic_new.topic_id,
                 api.get('api_name'),

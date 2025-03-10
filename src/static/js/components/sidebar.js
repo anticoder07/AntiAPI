@@ -3,6 +3,28 @@ import {truncateText} from '../utils/helpers.js';
 let sidebarInstance = null;
 let currentApiDetails = null;
 
+async function renameProjectApi(name) {
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const pid = urlParams.get('id');
+        if (pid === null)
+            return null;
+
+        const msg = await fetchPatch('/projects', {"project_name": name, "project_id": id}, true);
+
+        if (msg.status === 'SUCCESS') {
+            return msg.data;
+        } else {
+            Notification.show(msg.message, 'error');
+            return null;
+        }
+    } catch (error) {
+        console.error('Error fetching project list:', error);
+        Notification.show('An error occurred while fetching project list', 'error');
+        return null;
+    }
+}
+
 async function loadProject() {
     try {
         const urlParams = new URLSearchParams(window.location.search);
@@ -10,7 +32,7 @@ async function loadProject() {
         if (pid === null)
             return null;
 
-        const msg = await fetchGet('/projects/single', {"id": pid}, true);
+        const msg = await fetchGet('/projects', {"id": pid}, true);
 
         if (msg.status === 'SUCCESS') {
             return msg.data;
@@ -100,13 +122,9 @@ async function loadApiContent(api) {
                         <span id="api-endpoint" class="editable-url text-lg font-semibold cursor-text px-2 py-1 rounded hover:bg-opacity-10 hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                             ondblclick="this.contentEditable=true; this.focus();"
                             onblur="this.contentEditable=false;">
-                            ${api.endpoint || 'project/topic/api'}
+                            ${api.endpoint || 'project/topic/scan'}
                         </span>
                     </div>
-                    <button id="save-api" class="font-medium rounded-md px-6 py-1 transition-colors duration-200 hover:opacity-90"
-                            style="background-color: var(--api-${api.protocol.toLowerCase()}); color: white;">
-                        Save
-                    </button>
                 </header>
 
                 <div class="flex flex-1 overflow-hidden">
@@ -139,14 +157,14 @@ async function loadApiContent(api) {
 }
 
 function setupApiPageListeners() {
-    const saveButton = document.getElementById('save-api');
+    const saveButton = document.getElementById('save-scan');
     if (saveButton) {
         saveButton.addEventListener('click', () => {
             saveApiChanges();
         });
     }
 
-    const methodSelect = document.getElementById('api-method');
+    const methodSelect = document.getElementById('scan-method');
     if (methodSelect) {
         methodSelect.addEventListener('change', (e) => {
             const method = e.target.value;
@@ -160,9 +178,9 @@ async function saveApiChanges() {
     if (!currentApiDetails) return;
 
     try {
-        const method = document.getElementById('api-method').value;
-        const endpoint = document.getElementById('api-endpoint').textContent.trim();
-        const input = document.getElementById('api-input').value;
+        const method = document.getElementById('scan-method').value;
+        const endpoint = document.getElementById('scan-endpoint').textContent.trim();
+        const input = document.getElementById('scan-input').value;
 
         currentApiDetails.protocol = method;
         currentApiDetails.endpoint = endpoint;
@@ -256,53 +274,7 @@ function hideContextMenu() {
     }
 }
 
-// Handle project rename
 async function renameProject(projectId, currentName) {
-    // Create modal for renaming
-    const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-    modal.innerHTML = `
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-96">
-            <h3 class="text-lg font-medium mb-4">Rename Project</h3>
-            <input type="text" id="project-name-input" class="w-full p-2 border rounded-md mb-4" 
-                   value="${currentName}" placeholder="Project name">
-            <div class="flex justify-end space-x-2">
-                <button id="cancel-rename" class="px-4 py-2 border rounded-md">Cancel</button>
-                <button id="confirm-rename" class="px-4 py-2 bg-blue-500 text-white rounded-md">Save</button>
-            </div>
-        </div>
-    `;
-
-    document.body.appendChild(modal);
-
-    // Set up event listeners
-    document.getElementById('cancel-rename').addEventListener('click', () => {
-        modal.remove();
-    });
-
-    document.getElementById('confirm-rename').addEventListener('click', async () => {
-        const newName = document.getElementById('project-name-input').value.trim();
-        if (newName) {
-            try {
-                const response = await fetchPost('/projects/update', {
-                    id: projectId,
-                    project_name: newName
-                }, true);
-
-                if (response.status === 'SUCCESS') {
-                    Notification.show('Project renamed successfully', 'success');
-                    // Update sidebar data
-                    loadTopicList();
-                } else {
-                    Notification.show(response.message || 'Failed to rename project', 'error');
-                }
-            } catch (error) {
-                console.error('Error renaming project:', error);
-                Notification.show('An error occurred while renaming project', 'error');
-            }
-        }
-        modal.remove();
-    });
 }
 
 // Handle project delete
@@ -467,7 +439,7 @@ async function renameApi(apiId, currentName) {
     });
 
     document.getElementById('confirm-rename').addEventListener('click', async () => {
-        const newName = document.getElementById('api-name-input').value.trim();
+        const newName = document.getElementById('scan-name-input').value.trim();
         if (newName) {
             try {
                 const response = await fetchPost('/apis/update', {
@@ -680,19 +652,19 @@ class Sidebar {
     getProtocolClass(protocol) {
         switch (protocol) {
             case 'GET':
-                return 'api-get';
+                return 'scan-get';
             case 'POST':
-                return 'api-post';
+                return 'scan-post';
             case 'PATCH':
-                return 'api-patch';
+                return 'scan-patch';
             case 'DELETE':
-                return 'api-delete';
+                return 'scan-delete';
             case 'PUT':
-                return 'api-put';
+                return 'scan-put';
             case 'REST':
-                return 'api-get';
+                return 'scan-get';
             case 'GraphQL':
-                return 'api-post';
+                return 'scan-post';
             default:
                 return '';
         }
@@ -729,9 +701,21 @@ class Sidebar {
                     action: () => renameProject(projectId, projectName)
                 },
                 {
+                    label: 'Add Topic File',
+                    icon: 'fa-solid fa-file',
+                    action: () => renameProject(projectId, projectName)
+                },
+                {
                     label: 'Rename Project',
                     icon: 'fa-solid fa-pen',
                     action: () => renameProject(projectId, projectName)
+                },
+                {
+                    label: 'Scan Vulnerability',
+                    icon: 'fa-solid fa-virus',
+                    action: () => {
+                        window.location.href = `/web/page/scan?pid=${projectId}`;
+                    }
                 },
                 {
                     label: 'Delete Project',

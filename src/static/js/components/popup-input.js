@@ -141,7 +141,7 @@ function createPopup(onSubmit, fields, title_input) {
         fontWeight: '500',
         transition: 'all 0.2s',
         minWidth: '100px',
-        background: 'var(--api-delete, #f44336)'
+        background: 'var(--scan-delete, #f44336)'
     });
     cancelBtn.addEventListener('click', closePopup);
 
@@ -153,7 +153,7 @@ function createPopup(onSubmit, fields, title_input) {
     });
 
     cancelBtn.addEventListener('mouseout', function () {
-        this.style.background = 'var(--api-delete, #f44336)';
+        this.style.background = 'var(--scan-delete, #f44336)';
         this.style.transform = 'translateY(0)';
         this.style.boxShadow = 'none';
     });

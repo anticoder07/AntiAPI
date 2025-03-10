@@ -45,6 +45,8 @@ def create_app():
     from src.controllers.api.payload_controller import base_api_url_payload
     app.register_blueprint(base_api_url_payload, url_prefix='/api/v1/payloads')
 
+    from src.controllers.api.middle_controller import base_api_url_middle
+    app.register_blueprint(base_api_url_middle, url_prefix='/api/v1/mids')
 
     db.init_app(app)
     with app.app_context():

@@ -2,12 +2,12 @@ from flask import Blueprint, request
 
 from src.commons.security.token_required import bearer_token_required
 from src.payloads.responses.response_handler import ResponseHandler
-from src.services.api.api_service import create_new_api_service, delete_api_service, get_apis_service, get_api_service
+from src.services.api_service import create_new_api_service, delete_api_service, get_apis_service, get_api_service
 
 base_api_url_api = Blueprint('base_api_url_api', __name__)
 
 
-# GET /api/v1/apis?pid=
+# GET /scan/v1/apis?pid=
 # response: [{
 # 	topic_id:
 # 	api_name:
@@ -26,7 +26,7 @@ def take_apis():
     return ResponseHandler.success_without_message(apis)
 
 
-# POST /api/v1/apis
+# POST /scan/v1/apis
 # request: {
 #   topic_id:
 # 	api_name:
@@ -49,11 +49,11 @@ def create_new_api():
     return ResponseHandler.success_without_message(api)
 
 
-# DELETE /api/v1/apis
+# DELETE /scan/v1/apis
 # request: {
 # 	api_id:
 # }
-# response: "Delete api successfully"
+# response: "Delete scan successfully"
 @base_api_url_api.route('', methods=['DELETE'])
 @bearer_token_required
 def delete_api():

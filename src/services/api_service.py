@@ -9,7 +9,7 @@ from src.commons.exception.custom_exception.custom_exception import CustomExcept
 from src.payloads.dtos.api_dto import ApiDto
 from src.repositories.api_repository import create_api, delete_api_by_api_id, get_api_by_api_id, get_apis_by_topic_id
 from src.repositories.project_repository import get_project_by_project_id
-from src.repositories.topic_repository import get_topic_by_topic_id
+from src.repositories.topic_repository import get_topic_by_topic_id, get_topic_ids_by_project_id
 
 
 def create_new_api_service(data):
@@ -23,7 +23,7 @@ def create_new_api_service(data):
 
     line = validate_api_format(format_api)
     if line != -1:
-        raise CustomException("Format api wrong in line: " + str(line), HTTPStatus.BAD_REQUEST)
+        raise CustomException("Format scan wrong in line: " + str(line), HTTPStatus.BAD_REQUEST)
 
     topic = get_topic_by_topic_id(topic_id)
     if topic is None:
@@ -104,96 +104,11 @@ def delete_api_service(data):
 
         db.session.commit()
 
-        return "deleted api successfully"
+        return "deleted scan successfully"
 
     except Exception as e:
         db.session.rollback()
         raise CustomException(f"Unexpected error: {str(e)}", HTTPStatus.INTERNAL_SERVER_ERROR)
-
-
-# def validate_api_format(json_string):
-#     try:
-#         # Split JSON string into lines for line number tracking
-#         lines = json_string.strip().split('\n')
-#
-#         # Parse JSON
-#         data = json.loads(json_string)
-#
-#         # Check main keys
-#         required_keys = ["path_variable", "arg", "body"]
-#         for key in required_keys:
-#             if key not in data:
-#                 line_num = find_line_number(lines, f'"{key}"')
-#                 return line_num if line_num != -1 else 1
-#
-#         # Validate path_variable
-#         if not isinstance(data["path_variable"], list):
-#             line_num = find_line_number(lines, '"path_variable"')
-#             return line_num
-#
-#         for i, item in enumerate(data["path_variable"]):
-#             if not isinstance(item, dict):
-#                 line_num = find_element_line(lines, "path_variable", i)
-#                 return line_num
-#
-#             # Check required fields for path_variable items
-#             required_fields = ["type", "default_value"]
-#             for field in required_fields:
-#                 if field not in item:
-#                     line_num = find_element_line(lines, "path_variable", i)
-#                     return line_num
-#
-#             # Check default_value is a list
-#             if not isinstance(item["default_value"], list):
-#                 line_num = find_line_number(lines, '"default_value"', find_element_line(lines, "path_variable", i))
-#                 return line_num
-#
-#         # Validate arg
-#         if not isinstance(data["arg"], list):
-#             line_num = find_line_number(lines, '"arg"')
-#             return line_num
-#
-#         for i, arg in enumerate(data["arg"]):
-#             if not isinstance(arg, dict):
-#                 line_num = find_element_line(lines, "arg", i)
-#                 return line_num
-#
-#             required_arg_keys = ["arg_key", "arg_type", "default_value"]
-#             for key in required_arg_keys:
-#                 if key not in arg:
-#                     line_num = find_element_line(lines, "arg", i)
-#                     return line_num
-#
-#             if not isinstance(arg["arg_key"], str):
-#                 line_num = find_line_number(lines, f'"arg_key"', find_element_line(lines, "arg", i))
-#                 return line_num
-#
-#             if not isinstance(arg["arg_type"], str):
-#                 line_num = find_line_number(lines, f'"arg_type"', find_element_line(lines, "arg", i))
-#                 return line_num
-#
-#             if not isinstance(arg["default_value"], list):
-#                 line_num = find_line_number(lines, f'"default_value"', find_element_line(lines, "arg", i))
-#                 return line_num
-#
-#         # Validate body
-#         if not isinstance(data["body"], dict):
-#             line_num = find_line_number(lines, '"body"')
-#             return line_num
-#
-#         result = validate_body_structure(data["body"], lines, "body")
-#         if result != -1:
-#             return result
-#
-#         # If no errors, return -1
-#         return -1
-#
-#     except json.JSONDecodeError as e:
-#         # Return line with JSON syntax error
-#         return e.lineno
-#     except Exception:
-#         # If there's another error, return line 1
-#         return 1
 
 
 def validate_api_format(json_string):
@@ -279,6 +194,7 @@ def validate_api_format(json_string):
     except Exception:
         # If there's another error, return line 1
         return 1
+
 
 def validate_body_structure(body, lines, path):
     for key, value in body.items():
@@ -381,6 +297,7 @@ def find_element_line(lines, array_name, index):
 
     return array_start
 
+
 def decode_base64_to_string(base64_string, encoding='utf-8'):
     try:
         decoded_bytes = base64.b64decode(base64_string)
@@ -388,3 +305,13 @@ def decode_base64_to_string(base64_string, encoding='utf-8'):
         return decoded_string
     except Exception as e:
         raise CustomException("Error with message: " + str(e), HTTPStatus.INTERNAL_SERVER_ERROR)
+
+
+def get_apis_by_project_id(project_id):
+    topic_ids = get_topic_ids_by_project_id(project_id)
+
+    apis = []
+    for topic_id in topic_ids:
+        apis.extend(get_apis_by_topic_id(topic_id))
+
+    return apis

@@ -61,7 +61,7 @@ class NotificationManager {
     getNotificationStyles(type) {
         const styles = {
             success: {
-                backgroundColor: 'var(--api-get, #10b981)',
+                backgroundColor: 'var(--scan-get, #10b981)',
                 textColor: 'var(--text-color, white)',
                 icon: '✓'
             },
@@ -71,12 +71,12 @@ class NotificationManager {
                 icon: '✘'
             },
             warning: {
-                backgroundColor: 'var(--api-patch, #f59e0b)',
+                backgroundColor: 'var(--scan-patch, #f59e0b)',
                 textColor: 'var(--text-color, white)',
                 icon: '⚠️'
             },
             info: {
-                backgroundColor: 'var(--api-post, #3b82f6)',
+                backgroundColor: 'var(--scan-post, #3b82f6)',
                 textColor: 'var(--text-color, white)',
                 icon: 'ℹ️'
             }

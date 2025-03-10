@@ -53,8 +53,8 @@
                 }, false);
 
                 if (msg.status === 'SUCCESS') {
-                    localStorage.setItem('auth_token', msg.message.token);
-                    localStorage.setItem('companyInfo', JSON.stringify(msg.message.company));
+                    localStorage.setItem('auth_token', msg.data.token);
+                    localStorage.setItem('companyInfo', JSON.stringify(msg.data.company));
                     window.location.href = '/web/page';
                 } else {
                     Notification.show(msg.message || 'An error occurred during login', 'error');

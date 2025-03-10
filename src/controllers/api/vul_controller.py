@@ -1,33 +1,15 @@
-from flask import Blueprint
+from flask import Blueprint, request
 
 from src.commons.security.token_required import bearer_token_required
+from src.payloads.responses.response_handler import ResponseHandler
+from src.services.vul_service import get_vuls_project, get_vuls_api
 
 base_api_url_vul = Blueprint('base_api_url_vul', __name__)
 
-
-# GET /api/v1/vul?id=
-# response: {
-# 	api_id:
-# 	payload:
-# 	vul_type:
-# 	vul_status:
-# 	regex_fix:
-# }
-@base_api_url_vul.route('', methods=['GET'])
-@bearer_token_required
-def take_vul():
-    return None
-
-
-# GET /api/v1/vul?pid=
-# response: [{
-# 	api_id:
-# 	payload:
-# 	vul_type:
-# 	vul_status:
-# 	regex_fix:
-# }]
 @base_api_url_vul.route('', methods=['GET'])
 @bearer_token_required
 def take_vuls():
-    return None
+    pid = request.args.get('pid')
+    tid = request.args.get('tid')
+    data = get_vuls_project(pid) if pid else get_vuls_api(tid)
+    return ResponseHandler.success_without_message(data)

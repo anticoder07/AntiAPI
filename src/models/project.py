@@ -9,6 +9,7 @@ class Project(db.Model):
     project_id = db.Column('ProjectId', db.Integer, primary_key=True, autoincrement=True)
     company_id = db.Column('CompanyId', db.Integer, db.ForeignKey('Company.CompanyId'), nullable=False)
     project_name = db.Column('ProjectName', db.String(255), nullable=False)
+    # base_url = db.Column('BaseUrl', db.String(255))
     updated_at = db.Column('UpdateAt', db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     created_at = db.Column('CreateAt', db.DateTime, default=datetime.utcnow)
 

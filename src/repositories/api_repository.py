@@ -28,3 +28,6 @@ def get_api_by_api_id(api_id):
 
 def get_apis_by_topic_id(topic_id):
     return db.session.query(Api).filter(Api.topic_id == topic_id).all()
+
+def get_api_ids_by_topic_id(topic_id):
+    return [api.api_id for api in db.session.query(Api.api_id).filter(Api.topic_id == topic_id).all()]

@@ -5,15 +5,12 @@ from typing import List, Dict, Any, Tuple
 def get_element_count(format_api: Dict) -> int:
     count = 0
 
-    # Đếm path variables
     if "path_variable" in format_api:
         count += len(format_api["path_variable"])
 
-    # Đếm arguments
     if "arg" in format_api:
         count += len(format_api["arg"])
 
-    # Đếm các trường trong body
     if "body" in format_api:
         for key, value in format_api["body"].items():
             if isinstance(value, dict):
@@ -21,9 +18,8 @@ def get_element_count(format_api: Dict) -> int:
                     count += 1
                 elif "type" in value and value["type"] == "array" and "items" in value:
                     if isinstance(value["items"], str):
-                        count += 1  # Đơn giản là một mảng các giá trị đơn
+                        count += 1
                     elif isinstance(value["items"], dict) and "properties" in value["items"]:
-                        # Mảng các đối tượng phức tạp
                         for prop_key, prop_value in value["items"]["properties"].items():
                             count += 1
             elif isinstance(value, list):
@@ -35,7 +31,6 @@ def get_element_count(format_api: Dict) -> int:
 def get_default_values(format_api: Dict) -> List:
     default_values = []
 
-    # Lấy default values từ path variables
     if "path_variable" in format_api:
         for path_var in format_api["path_variable"]:
             if "default_value" in path_var:
@@ -43,7 +38,6 @@ def get_default_values(format_api: Dict) -> List:
             else:
                 default_values.append(None)
 
-    # Lấy default values từ arguments
     if "arg" in format_api:
         for arg in format_api["arg"]:
             if "default_value" in arg:
@@ -51,7 +45,6 @@ def get_default_values(format_api: Dict) -> List:
             else:
                 default_values.append(None)
 
-    # Lấy default values từ body
     if "body" in format_api:
         for key, value in format_api["body"].items():
             if isinstance(value, dict):
@@ -60,7 +53,6 @@ def get_default_values(format_api: Dict) -> List:
                 else:
                     default_values.append(None)
 
-                # Xử lý các trường nested
                 if "type" in value and value["type"] == "array" and "items" in value:
                     if isinstance(value["items"], dict) and "properties" in value["items"]:
                         for prop_key, prop_value in value["items"]["properties"].items():
@@ -75,12 +67,10 @@ def get_default_values(format_api: Dict) -> List:
 def get_element_names(format_api: Dict) -> List[str]:
     element_names = []
 
-    # Lấy tên từ path variables
     if "path_variable" in format_api:
         for i, path_var in enumerate(format_api["path_variable"]):
             element_names.append(f"path_variable_{i}")
 
-    # Lấy tên từ arguments
     if "arg" in format_api:
         for arg in format_api["arg"]:
             if "arg_key" in arg:
@@ -88,12 +78,10 @@ def get_element_names(format_api: Dict) -> List[str]:
             else:
                 element_names.append(f"arg_unknown")
 
-    # Lấy tên từ body
     if "body" in format_api:
         for key, value in format_api["body"].items():
             element_names.append(f"body_{key}")
 
-            # Xử lý các trường nested
             if isinstance(value, dict) and "type" in value and value["type"] == "array" and "items" in value:
                 if isinstance(value["items"], dict) and "properties" in value["items"]:
                     for prop_key in value["items"]["properties"].keys():
@@ -103,18 +91,8 @@ def get_element_names(format_api: Dict) -> List[str]:
 
 
 def get_element_type(format_api: Dict) -> List[str]:
-    """
-    Extracts the type of each element from the format_api structure.
-
-    Args:
-        format_api: Dictionary containing the API format specification
-
-    Returns:
-        List of element types corresponding to each element in the API
-    """
     element_types = []
 
-    # Get types from path variables
     if "path_variable" in format_api:
         for path_var in format_api["path_variable"]:
             if "type" in path_var:
@@ -122,7 +100,6 @@ def get_element_type(format_api: Dict) -> List[str]:
             else:
                 element_types.append("Unknown")
 
-    # Get types from arguments
     if "arg" in format_api:
         for arg in format_api["arg"]:
             if "arg_type" in arg:
@@ -130,20 +107,16 @@ def get_element_type(format_api: Dict) -> List[str]:
             else:
                 element_types.append("Unknown")
 
-    # Get types from body
     if "body" in format_api:
         for key, value in format_api["body"].items():
             if isinstance(value, dict):
                 if "type" in value:
                     if value["type"] != "array" and value["type"] != "object":
-                        # Simple field
                         element_types.append(value["type"])
                     elif value["type"] == "array" and "items" in value:
                         if isinstance(value["items"], str):
-                            # Simple array
                             element_types.append(f"array<{value['items']}>")
                         elif isinstance(value["items"], dict) and "properties" in value["items"]:
-                            # Array of complex objects
                             for prop_key, prop_value in value["items"]["properties"].items():
                                 if "type" in prop_value:
                                     element_types.append(prop_value["type"])
@@ -176,21 +149,18 @@ def build_api_request(datas: List, endpoint: str, format_api: Dict) -> Tuple[str
     query_params = {}
     body_request = {}
 
-    # Xử lý path variables
     if "path_variable" in format_api:
         for i, path_var in enumerate(format_api["path_variable"]):
             if data_index < len(datas):
                 path_vars.append(datas[data_index])
                 data_index += 1
             else:
-                # Sử dụng giá trị mặc định nếu có
                 if "default_value" in path_var and isinstance(path_var["default_value"], list) and len(
                         path_var["default_value"]) > 0:
                     path_vars.append(path_var["default_value"][0])
                 else:
                     path_vars.append("")
 
-    # Xử lý arguments (query parameters)
     if "arg" in format_api:
         for arg in format_api["arg"]:
             if "arg_key" in arg:
@@ -198,29 +168,24 @@ def build_api_request(datas: List, endpoint: str, format_api: Dict) -> Tuple[str
                     query_params[arg["arg_key"]] = datas[data_index]
                     data_index += 1
                 else:
-                    # Sử dụng giá trị mặc định nếu có
                     if "default_value" in arg and isinstance(arg["default_value"], list) and len(
                             arg["default_value"]) > 0:
                         query_params[arg["arg_key"]] = arg["default_value"][0]
 
-    # Xử lý body
     if "body" in format_api:
         for key, value in format_api["body"].items():
             if isinstance(value, dict):
                 if "type" in value:
                     if value["type"] != "array" and value["type"] != "object":
-                        # Trường dữ liệu đơn giản
                         if data_index < len(datas):
                             body_request[key] = datas[data_index]
                             data_index += 1
                         else:
-                            # Sử dụng giá trị mặc định nếu có
                             if "default_value" in value and isinstance(value["default_value"], list) and len(
                                     value["default_value"]) > 0:
                                 body_request[key] = value["default_value"][0]
                     elif value["type"] == "array" and "items" in value:
                         if isinstance(value["items"], str):
-                            # Mảng đơn giản
                             if data_index < len(datas):
                                 if isinstance(datas[data_index], list):
                                     body_request[key] = datas[data_index]
@@ -230,7 +195,6 @@ def build_api_request(datas: List, endpoint: str, format_api: Dict) -> Tuple[str
                             else:
                                 body_request[key] = []
                         elif isinstance(value["items"], dict) and "properties" in value["items"]:
-                            # Mảng các đối tượng phức tạp
                             array_items = []
                             item_obj = {}
 
@@ -239,7 +203,6 @@ def build_api_request(datas: List, endpoint: str, format_api: Dict) -> Tuple[str
                                     item_obj[prop_key] = datas[data_index]
                                     data_index += 1
                                 else:
-                                    # Sử dụng giá trị mặc định nếu có
                                     if "default_value" in prop_value and isinstance(prop_value["default_value"],
                                                                                     list) and len(
                                         prop_value["default_value"]) > 0:
@@ -250,10 +213,8 @@ def build_api_request(datas: List, endpoint: str, format_api: Dict) -> Tuple[str
                             array_items.append(item_obj)
                             body_request[key] = array_items
 
-    # Xây dựng endpoint với path variables
     final_endpoint = replace_path_variables(endpoint, path_vars)
 
-    # Thêm query parameters vào endpoint
     if query_params:
         query_string = "&".join([f"{k}={v}" for k, v in query_params.items()])
         final_endpoint = f"{final_endpoint}?{query_string}"

@@ -1,3 +1,5 @@
+from src.repositories.payload_repository import get_all_payload
+
 char_groups = {
     "operators": ["+", "-", "*", "/", "%", "×", "·", "**"],
     "brackets": ["{}", "[]", "()", "<>", "%%", "[%]", "(( ))", "{% %}"],
@@ -8,7 +10,7 @@ char_groups = {
 }
 
 
-def generate_variants(payload, limit=None):
+def generate_payloads_child(payload, limit=None):
     variants = set([payload])
 
     for key, group in char_groups.items():
@@ -24,3 +26,11 @@ def generate_variants(payload, limit=None):
                         return list(variants)
 
     return list(variants)[:limit] if limit else list(variants)
+
+
+def get_payloads_content():
+    payload_models = get_all_payload()
+
+    payloads = [payload.payload_content for payload in payload_models]
+
+    return payloads
